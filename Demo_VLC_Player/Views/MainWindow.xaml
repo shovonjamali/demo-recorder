@@ -1,0 +1,129 @@
+﻿<controls:MetroWindow x:Class="Demo_VLC_Player.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:wpf="clr-namespace:Vlc.DotNet.Wpf;assembly=Vlc.DotNet.Wpf"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"   
+        xmlns:viewModels="clr-namespace:Demo_VLC_Player.ViewModels"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        mc:Ignorable="d"
+        BorderThickness="0" 
+        GlowBrush="Black"
+        ResizeMode="CanResizeWithGrip"
+        WindowTransitionsEnabled="False"
+        WindowStartupLocation="CenterScreen"
+        Title="Recorder tool" Height="350" Width="800">
+    <Window.DataContext>
+        <viewModels:PlayerViewModel/>
+    </Window.DataContext>
+    <Grid Margin="0,10,-0.4,0">
+        <Grid x:Name="VLC_Player">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <!--<Vlc:VlcControl xmlns:Vlc="clr-namespace:Vlc.DotNet.Wpf;assembly=Vlc.DotNet.Wpf" x:Name="VLControl"/>-->
+                <!--<wpf:VlcControl x:Name="VlcControl"/>-->
+                <ContentControl x:Name="ControlContainer" Content="{Binding VLCPlayer.VlcPlayerControl}"/>    <!--Name="ControlContainer-->
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="6*"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Slider Grid.Row="0" Grid.Column="0" Minimum="0" Maximum="{Binding VLCPlayer.CurrentTrackLength, Mode=OneWay}" Value="{Binding VLCPlayer.CurrentTrackPosition, Mode=TwoWay}" x:Name="SeekbarControl" VerticalAlignment="Center" Margin="3" Thumb.DragStarted="SeekbarControl_DragStarted" Thumb.DragCompleted="SeekbarControl_DragCompleted" Style="{DynamicResource FlatSlider}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="PreviewMouseDown">
+                            <i:InvokeCommandAction Command="{Binding TrackControlMouseDownCommand}"></i:InvokeCommandAction>
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="PreviewMouseUp">
+                            <i:InvokeCommandAction Command="{Binding TrackControlMouseUpCommand}"></i:InvokeCommandAction>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Slider>
+                <!--<Image Grid.Row="0" Grid.Column="2" Source="/Images/volume.png"></Image>-->
+                <iconPacks:PackIconMaterial Grid.Row="0" Grid.Column="2" Kind="VolumeHigh" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                <Slider Grid.Row="0" Grid.Column="3" x:Name="VolumeControl" Minimum="0" Maximum="100" Value="{Binding VLCPlayer.CurrentVolume, Mode=TwoWay}" VerticalAlignment="Center" Margin="3,3,5,3">
+                    <!--<Behaviors:Interaction.Triggers>
+                        <Behaviors:EventTrigger EventName="ValueChanged" SourceObject="{Binding ElementName=VolumeControl}">
+                            <Behaviors:InvokeCommandAction Command="{Binding VolumeControlValueChanged}"/>
+                        </Behaviors:EventTrigger>
+                    </Behaviors:Interaction.Triggers>-->
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="ValueChanged">
+                            <i:InvokeCommandAction Command="{Binding VolumeControlValueChangedCommand}"></i:InvokeCommandAction>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Slider>                
+            </Grid>
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Width="30" Height="30" x:Name="StartButton" Grid.Row="0" Grid.Column="0" Margin="3" Command="{Binding StartPlaybackCommand}" ToolTip="Play">
+                    <!--<Image Source="Images/play.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>-->
+                    <iconPacks:PackIconMaterial Kind="Play" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                </Button>
+                <Button Width="30" Height="30" x:Name="PauseButton" Grid.Row="0" Grid.Column="1" Margin="3" Command="{Binding PausePlaybackCommand}" ToolTip="Pause">
+                    <!--<Image Source="Images/pause.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>-->
+                    <iconPacks:PackIconMaterial Kind="Pause" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                </Button>
+                <Button Width="30" Height="30" x:Name="StopButton" Grid.Row="0" Grid.Column="2" Margin="3" Command="{Binding StopPlaybackCommand}" ToolTip="Stop">
+                    <!--<Image Source="Images/stop.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>-->
+                    <iconPacks:PackIconMaterial Kind="Stop" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                </Button>
+                <Button Width="30" Height="30" x:Name="ForwardButton" Grid.Row="0" Grid.Column="3" Margin="3" Command="{Binding ForwardPlaybackCommand}" ToolTip="Forward ten seconds">
+                    <!--<Image Source="Images/fast_forward.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>-->
+                    <iconPacks:PackIconMaterial Kind="FastForward" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                </Button>
+                <Button Width="30" Height="30" x:Name="BackwardButton" Grid.Row="0" Grid.Column="4" Margin="3" Command="{Binding RewindPlaybackCommand}" ToolTip="Rewind ten seconds">
+                    <!--<Image Source="Images/fast_rewind.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>-->
+                    <iconPacks:PackIconMaterial Kind="Rewind" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                </Button>
+                <Button Width="30" Height="30" Grid.Row="0" Grid.Column="5" Margin="3" IsEnabled="False" ToolTip="Next">
+                    <!--<Image Source="Images/skip_previous.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>-->
+                    <iconPacks:PackIconMaterial Kind="SkipPrevious" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                </Button>
+                <Button Width="30" Height="30" Grid.Row="0" Grid.Column="6" Margin="3" IsEnabled="False" ToolTip="Prev">
+                    <!--<Image Source="Images/skip_next.png" VerticalAlignment="Center" HorizontalAlignment="Center"/>-->
+                    <iconPacks:PackIconMaterial Kind="SkipNext" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                </Button>
+                <Label Grid.Row="0" Grid.Column="7" x:Name="LengthLabel" Content="{Binding VLCPlayer.CurrentTrackLengthString, Mode=OneWay}"/>
+                <Label Grid.Row="0" Grid.Column="8" x:Name="CurrentPositionLabel" Content="{Binding VLCPlayer.CurrentTrackPositionString, Mode=TwoWay}"/>
+                <Label Grid.Row="0" Grid.Column="9" x:Name="DebugLabel" Content=""/>
+            </Grid>
+            <Grid Grid.Row="3">
+                <controls:ToggleSwitch x:Name="TogglePlayer" Style="{StaticResource MahApps.Metro.Styles.ToggleSwitch.Win10}" Margin="3,8,0,0" OnLabel="VLC" OffLabel="Media Player" IsCheckedChanged="TogglePlayer_IsCheckedChanged"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</controls:MetroWindow>
